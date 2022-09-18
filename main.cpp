@@ -131,7 +131,10 @@ int main() {
   size_t circle_seg = 128;
   size_t long_seg = 12;
   auto tri_num = get_triangle_num(circle_seg, long_seg);
-  std::cout << "Expected triangle count: " << tri_num << std::endl;
+  std::cout << "Expected triangle count: " << tri_num << std::endl
+            << "Expected memory usage: "
+            << static_cast<float>(sizeof(Triangle) * tri_num) / (1024.0*1024.0)
+            << " MiB." << std::endl;
 
   std::vector<Triangle> tris;
   tris.reserve(tri_num);
@@ -144,7 +147,6 @@ int main() {
 
   make_rounded_cylinder(tris, Vector3d(-1, 0, 0), Vector3d(0, 0, 3), 1.0, circle_seg, long_seg);
   std::cout << "Finished, triangle count: " << tris.size() << std::endl;
-  std::cout << static_cast<float>(sizeof(Triangle) * tris.size()) / 1024.0 << " MiB." << std::endl;
 
   for (size_t i = 0; i < tris.size(); ++i)
     tris[i].write(fo);
