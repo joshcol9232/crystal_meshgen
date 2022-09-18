@@ -1,6 +1,8 @@
 #include <fstream>
 #include "triangle.h"
 
+namespace crymsh {
+
 void Triangle::write(std::ofstream& fo) {
   fo << "facet normal 0e0 0e0 0e0\n\touter loop\n";
   for (char i = 0; i < 3; ++i)
@@ -11,3 +13,5 @@ void Triangle::write(std::ofstream& fo) {
 
   fo << "\tendloop\nendfacet\n";
 }
+
+} // namespace crymsh

@@ -15,5 +15,4 @@ add_library(Crymsh
 
 target_link_libraries(Crymsh PRIVATE OpenMP::OpenMP_CXX Eigen3::Eigen)
 
-# add_executable(gen_cylinder src/mains/gen_cylinder.cc)
-# target_link_libraries(gen_cylinder PRIVATE crymsh Eigen3::Eigen)
+add_subdirectory(src/mains)
