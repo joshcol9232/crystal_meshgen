@@ -39,14 +39,14 @@ void make_hemisphere(std::vector<Triangle>& triangles, const Vector3d& v1,
                      const Vector3d& dir, const double r0, const double a0,
                      const double a1, const size_t longitudes) {
 
-  const double dphi = M_PI/(2 * static_cast<double>(longitudes-1));
+  const double dphi = M_PI/(2 * static_cast<double>(longitudes+1));
   double cosphi_next, sinphi_next, r_lower, r_higher;
   double phi = 0;
   double cosphi = cos(phi);
   double sinphi = sin(phi);
   Vector3d vert0, vert1, vert2, vert3;
 
-  for (size_t l = 0; l < longitudes-1; ++l) {
+  for (size_t l = 0; l < longitudes; ++l) {
     cosphi_next = cos(phi + dphi);
     sinphi_next = sin(phi + dphi);
     r_lower = r0 * cosphi;
@@ -105,19 +105,36 @@ void make_rounded_cylinder(std::vector<Triangle>& triangles, const Vector3d& sta
     anext += da;
     const Vector3d prevtmp = circle_eq(v1, v2, start, radius, anext); // next segment
     // Rounded ends
-    make_hemisphere(triangles, v1, v2, end, normal, radius, anext-da, anext, long_seg); // Bottom
-    make_hemisphere(triangles, v1, v2, start, normal * -1, radius, anext-da, anext, long_seg); // Top
+    make_hemisphere(triangles, v1, v2, end, normal,
+                    radius, anext-da, anext, long_seg); // Bottom
+    make_hemisphere(triangles, v1, v2, start, -normal,
+                    radius, anext-da, anext, long_seg); // Top
 
     // Side panels
-    triangles.push_back(Triangle(Vector3d(prev), Vector3d(prevtmp), prevtmp + lengthvec)); // top -> bottom
-    triangles.push_back(Triangle(prevtmp + lengthvec, prev + lengthvec, Vector3d(prev))); // bottom -> top
+    triangles.push_back(
+      Triangle(Vector3d(prev), Vector3d(prevtmp), prevtmp + lengthvec)
+    ); // top -> bottom
+    triangles.push_back(
+      Triangle(prevtmp + lengthvec, prev + lengthvec, Vector3d(prev))
+    ); // bottom -> top
     prev = prevtmp;
   }
 }
 
 
+size_t get_triangle_num(size_t circle_seg, size_t long_seg) {
+  return circle_seg * 4 * (1 + long_seg);
+}
+
+
 int main() {
+  size_t circle_seg = 128;
+  size_t long_seg = 12;
+  auto tri_num = get_triangle_num(circle_seg, long_seg);
+  std::cout << "Expected triangle count: " << tri_num << std::endl;
+
   std::vector<Triangle> tris;
+  tris.reserve(tri_num);
 
   // Write to output stl
   std::ofstream fo;
@@ -125,8 +142,9 @@ int main() {
   fo.precision(OUT_PRECISION);
   fo << "solid " << std::endl;
 
-  make_rounded_cylinder(tris, Vector3d(-1, 0, 0), Vector3d(0, 0, 3), 1.0, 128, 40);
-  std::cout << "Triangle count: " << tris.size() << std::endl;
+  make_rounded_cylinder(tris, Vector3d(-1, 0, 0), Vector3d(0, 0, 3), 1.0, circle_seg, long_seg);
+  std::cout << "Finished, triangle count: " << tris.size() << std::endl;
+  std::cout << static_cast<float>(sizeof(Triangle) * tris.size()) / 1024.0 << " MiB." << std::endl;
 
   for (size_t i = 0; i < tris.size(); ++i)
     tris[i].write(fo);
