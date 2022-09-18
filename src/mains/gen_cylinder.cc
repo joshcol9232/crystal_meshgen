@@ -8,26 +8,12 @@
 #include <array>
 #include <Eigen/Dense>
 
+#include "crymsh/triangle.h"
+
 using Eigen::Vector3d;
 
 #define OUT_PRECISION 8
 
-struct Triangle {
-  Vector3d verts[3];
-
-  Triangle(Vector3d v1, Vector3d v2, Vector3d v3): verts{v1, v2, v3} {}
-
-  void write(std::ofstream& fo) {
-    fo << "facet normal 0e0 0e0 0e0\n\touter loop\n";
-    for (char i = 0; i < 3; ++i)
-      fo << "\t\tvertex " << std::scientific << verts[i][0] << ' '
-                          << verts[i][1] << ' '
-                          << verts[i][2]
-                          << std::endl;
-
-    fo << "\tendloop\nendfacet\n";
-  }
-};
 
 Vector3d circle_eq(const Vector3d& v1, const Vector3d& v2, const Vector3d& centre,
                  const double radius, const double a) {
@@ -73,7 +59,6 @@ void make_hemisphere(std::vector<Triangle>& triangles, const Vector3d& v1,
     centre + dir * r0  // Top of hemisphere
   ));
 }
-
 
 void make_rounded_cylinder(std::vector<Triangle>& triangles, const Vector3d& start,
                            const Vector3d& end, const double radius,
@@ -121,8 +106,7 @@ void make_rounded_cylinder(std::vector<Triangle>& triangles, const Vector3d& sta
   }
 }
 
-
-size_t get_triangle_num(size_t circle_seg, size_t long_seg) {
+size_t triangles_per_cylinder(size_t circle_seg, size_t long_seg) {
   return circle_seg * 4 * (1 + long_seg);
 }
 
