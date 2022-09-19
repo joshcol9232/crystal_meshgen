@@ -1,9 +1,10 @@
 #pragma once
 
 #include <Eigen/Dense>
-using Eigen::Vector3d;
 
 namespace crymsh {
+  
+using Eigen::Vector3d;
 
 struct Triangle {
   Vector3d verts[3];

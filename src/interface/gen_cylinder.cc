@@ -1,11 +1,5 @@
-#include <iostream>
 #include <vector>
 #include <fstream>
-#include <cassert>
-#include <string>
-#include <cmath>
-#include <stdlib.h>
-#include <array>
 #include <Eigen/Dense>
 
 #include "../crymsh/generator.h"

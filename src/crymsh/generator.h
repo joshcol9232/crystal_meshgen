@@ -7,9 +7,9 @@
 
 #include "triangle.h"
 
-using Eigen::Vector3d;
 
 namespace crymsh {
+using Eigen::Vector3d;
 
 class Generator {
 public:

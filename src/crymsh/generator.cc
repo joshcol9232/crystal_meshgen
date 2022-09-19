@@ -2,9 +2,12 @@
 #include <fstream>
 #include <string>
 #include <iostream>
+#include <Eigen/Dense>
 #include "generator.h"
 
 namespace crymsh {
+
+using Eigen::Vector3d;
 
 #define OUT_PRECISION 8
 
