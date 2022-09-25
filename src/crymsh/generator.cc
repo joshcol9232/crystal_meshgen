@@ -1,7 +1,6 @@
 #include <vector>
 #include <fstream>
 #include <string>
-#include <iostream>
 #include <Eigen/Dense>
 #include "generator.h"
 
@@ -77,6 +76,8 @@ void Generator::make_rounded_cylinder(const Vector3d& start, const Vector3d& end
   const double da = 2 * M_PI/circle_seg;
   double anext = 0;
   Vector3d prev = circle_eq(v1, v2, start, radius, anext);
+
+  #pragma omp parallel for
   for (size_t t = 0; t < circle_seg; ++t) {
     anext += da;
     const Vector3d prevtmp = circle_eq(v1, v2, start, radius, anext); // next segment
@@ -111,7 +112,8 @@ void Generator::flush_to(std::ofstream& fo) {
 void Generator::save_crystal_stl(const std::string& filepath,
                                  const std::vector<Vector3d>& rods, // Vectors in groups of 2
                                  const double rod_radius, const size_t radial_seg,
-                                 const size_t longitude_seg) {
+                                 const size_t longitude_seg,
+                                 const size_t flush_period) {
 
   std::ofstream fo;
   fo.open(filepath);
@@ -119,10 +121,8 @@ void Generator::save_crystal_stl(const std::string& filepath,
   fo << "solid " << std::endl;
 
   for (size_t r = 0; r < rods.size(); r += 2) {
-    std::cout << "Start rod: " << rods[r] << std::endl
-              << "End rod: " << rods[r+1] << std::endl;
     make_rounded_cylinder(rods[r], rods[r+1], rod_radius, radial_seg, longitude_seg);
-    if (r % 8 == 0) { // Write to file every 8 cylinders - arbitrary choice
+    if (r % flush_period == 0) { // Write to file every 8 cylinders - arbitrary choice
       flush_to(fo);
     }
   }

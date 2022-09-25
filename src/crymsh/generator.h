@@ -18,7 +18,7 @@ public:
   void save_crystal_stl(const std::string& filepath,
                         const std::vector<Vector3d>& rods,   // Vectors in groups of 2
                         const double rod_radius, const size_t radial_seg,
-                        const size_t longitude_seg);
+                        const size_t longitude_seg, const size_t flush_period);
 
 private:
   void make_hemisphere(const Vector3d& v1, const Vector3d& v2, const Vector3d& centre,
